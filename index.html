@@ -1,0 +1,117 @@
+
+index_html_내용.txt
+
+100%
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>장비 정보</title>
+<style>
+  :root {
+    --bg:#f3f5f7; --surface:#fff; --surface-2:#eaeef2; --ink:#172029; --ink-2:#3d4a56; --muted:#63707d; --border:#d9e0e7;
+    --accent:#1d5bd6; --good:#1b7f55; --good-wash:#dcf2e6; --warn:#a86a0b; --warn-wash:#fbeed2; --bad:#c23a3a; --bad-wash:#fbe3e3; --ret:#6553b8; --ret-wash:#ebe7fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1418; --surface:#171e25; --surface-2:#1f2830; --ink:#e8edf2; --ink-2:#c3ccd5; --muted:#93a1ae; --border:#29343e;
+      --accent:#79a6ff; --good:#5fcf98; --good-wash:#173327; --warn:#e6b25a; --warn-wash:#3a2c12; --bad:#f08a8a; --bad-wash:#3d1e1e; --ret:#b3a5f0; --ret-wash:#2a2447; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:"Apple SD Gothic Neo","Pretendard","Noto Sans KR",-apple-system,"Segoe UI",sans-serif; font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .card { width:100%; max-width:420px; background:var(--surface); border:1px solid var(--border); border-radius:18px; box-shadow:0 1px 2px rgba(0,0,0,.05),0 14px 40px -18px rgba(0,0,0,.3); overflow:hidden; }
+  .top { padding:24px 22px 18px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+  .eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+  h1 { margin:0; font-size:21px; line-height:1.3; font-weight:700; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12.5px; font-weight:600; align-self:flex-start; }
+  .pill::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .active { background:var(--good-wash); color:var(--good); } .idle { background:var(--warn-wash); color:var(--warn); }
+  .repair { background:var(--bad-wash); color:var(--bad); } .returned { background:var(--ret-wash); color:var(--ret); }
+  .body { padding:6px 22px 8px; }
+  .row { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .row:last-child { border-bottom:none; }
+  .k { font-size:13px; color:var(--muted); flex:none; }
+  .v { font-weight:600; text-align:right; overflow-wrap:anywhere; }
+  .mono { font-family:ui-monospace,"SF Mono",Menlo,monospace; font-variant-numeric:tabular-nums; }
+  .foot { padding:12px 22px 18px; font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  .foot .fresh { color:var(--good); font-weight:600; }
+  .err { padding:44px 24px; text-align:center; color:var(--muted); }
+  .err h1 { font-size:17px; margin-bottom:6px; color:var(--ink); }
+  .skeleton { padding:40px 24px; text-align:center; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card" id="card"><div class="skeleton">불러오는 중…</div></div></div>
+<script>
+(function(){
+  "use strict";
+  /* 이 페이지는 QR 링크의 # 뒤에 실린 자산 정보를 그대로 보여주고,
+     같은 폴더의 snapshot.json(대시보드에서 내보낸 최신본)이 있으면
+     그 정보로 덮어씁니다. 서버, 로그인, 외부 API가 필요 없습니다. */
+  var SNAPSHOT_URL = "snapshot.json";
+
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function fmtDate(iso){ if(!iso) return "–"; var p = String(iso).slice(0,10).split("-"); return p.length === 3 ? p[0] + "." + p[1] + "." + p[2] : iso; }
+  function cls(s){ return s === "사용중" ? "active" : s === "회수됨" ? "returned" : s === "수리중" ? "repair" : "idle"; }
+  function b64urlDecode(s){
+    s = s.replace(/-/g, "+").replace(/_/g, "/"); while(s.length % 4) s += "=";
+    var bin = atob(s), bytes = new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+  function parseHash(){
+    var h = (location.hash || "").replace(/^#/, "");
+    var out = {};
+    h.split("&").forEach(function(kv){ var i = kv.indexOf("="); if(i > 0) out[kv.slice(0,i)] = kv.slice(i+1); });
+    return out;
+  }
+  function render(a, meta){
+    var card = document.getElementById("card");
+    card.innerHTML =
+      '<div class="top"><span class="eyebrow">' + esc(a.category || "장비") + '</span><h1>' + esc(a.name || "이름 없음") + '</h1>' +
+        (a.status ? '<span class="pill ' + cls(a.status) + '">' + esc(a.status) + '</span>' : '') + '</div>' +
+      '<div class="body">' +
+        (a.assetId ? '<div class="row"><span class="k">자산 ID</span><span class="v mono">' + esc(a.assetId) + '</span></div>' : '') +
+        '<div class="row"><span class="k">이용자</span><span class="v">' + (a.holderName ? esc(a.holderName) : "미배정") + '</span></div>' +
+        '<div class="row"><span class="k">소속팀</span><span class="v">' + (a.holderDept ? esc(a.holderDept) : "–") + '</span></div>' +
+        '<div class="row"><span class="k">지급일</span><span class="v mono">' + fmtDate(a.issueDate) + '</span></div>' +
+        (a.token ? '<div class="row"><span class="k">태그 번호</span><span class="v mono" style="font-weight:500;color:var(--muted)">' + esc(a.token) + '</span></div>' : '') +
+      '</div>' +
+      '<div class="foot">' + (meta.fresh
+          ? '<span class="fresh">최신 정보 (' + esc(fmtDate(meta.asOf)) + ' 기준)</span>'
+          : '<span>QR 발급 시점 정보입니다' + (meta.note ? ", " + esc(meta.note) : "") + '</span>') +
+        '<span>문의는 총무팀으로 연락해 주세요.</span></div>';
+  }
+  function renderError(title, msg){
+    document.getElementById("card").innerHTML = '<div class="err"><h1>' + esc(title) + '</h1><div>' + esc(msg) + '</div></div>';
+  }
+
+  var p = parseHash();
+  var base = null;
+  if(p.d){
+    try { var o = JSON.parse(b64urlDecode(p.d)); base = { token: p.t || o.k || "", name: o.n, category: o.c, assetId: o.i, holderName: o.h, holderDept: o.g, issueDate: o.d, status: o.s }; }
+    catch(e){ base = null; }
+  } else if(p.t){
+    base = { token: p.t };
+  }
+  if(!base){ renderError("잘못된 링크입니다", "QR이 손상되었거나 이 페이지용 링크가 아닙니다."); return; }
+  if(base.name) render(base, { fresh:false, note:"최신 정보를 확인하는 중" });
+  else document.getElementById("card").innerHTML = '<div class="skeleton">최신 정보를 확인하는 중…</div>';
+
+  fetch(SNAPSHOT_URL + "?v=" + Date.now(), { cache: "no-store" }).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }).then(function(snap){
+    var list = snap && (snap.assets || snap), found = null;
+    if(Array.isArray(list)) for(var i=0;i<list.length;i++){ if(list[i].token === base.token){ found = list[i]; break; } }
+    if(found) render(Object.assign({}, base, found), { fresh:true, asOf: snap.asOf || snap.exportedAt || "" });
+    else if(base.name) render(base, { fresh:false, note: "최신 목록에서 이 태그를 찾지 못했습니다" });
+    else renderError("등록된 장비를 찾을 수 없습니다", "태그 " + base.token + "은(는) 최신 목록에 없습니다.");
+  }).catch(function(){
+    if(base.name) render(base, { fresh:false, note: "" });
+    else renderError("정보를 불러오지 못했습니다", "네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
+  });
+})();
+</script>
+</body>
+</html>
+index_html_내용.txt 표시 중입니다.
