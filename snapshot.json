@@ -1,0 +1,187 @@
+
+snapshot_json_내용.txt
+
+100%
+{
+ "asOf": "2026-09-09",
+ "count": 16,
+ "assets": [
+  {
+   "token": "sxvc-wa85-sjuh",
+   "name": "MacBook Pro 14 (M4 Pro / 24GB / 512GB)",
+   "category": "노트북",
+   "assetId": "NB-2026-001",
+   "holderName": "오예린",
+   "holderDept": "세일즈팀",
+   "issueDate": "2026-09-05",
+   "status": "사용중",
+   "updatedAt": "2026-09-06T18:00:00Z"
+  },
+  {
+   "token": "f39v-bk3a-56js",
+   "name": "MacBook Pro 14 (M4 Pro / 24GB / 512GB)",
+   "category": "노트북",
+   "assetId": "NB-2026-002",
+   "holderName": "한지우",
+   "holderDept": "플랫폼개발팀",
+   "issueDate": "2026-07-24",
+   "status": "사용중",
+   "updatedAt": "2026-09-01T10:00:00Z"
+  },
+  {
+   "token": "qt5p-vnuv-qvh7",
+   "name": "MacBook Air 13 (M4 / 16GB / 512GB)",
+   "category": "노트북",
+   "assetId": "NB-2026-003",
+   "holderName": "임시우",
+   "holderDept": "세일즈팀",
+   "issueDate": "2026-04-09",
+   "status": "사용중",
+   "updatedAt": "2026-09-07T13:00:00Z"
+  },
+  {
+   "token": "s6xs-cn4c-q7ea",
+   "name": "MacBook Air 13 (M4 / 16GB / 512GB)",
+   "category": "노트북",
+   "assetId": "NB-2026-004",
+   "holderName": "",
+   "holderDept": "",
+   "issueDate": "2026-05-10",
+   "status": "회수됨",
+   "updatedAt": "2026-09-02T10:00:00Z"
+  },
+  {
+   "token": "cdwu-b9gq-kwje",
+   "name": "LG gram 16 (2025)",
+   "category": "노트북",
+   "assetId": "NB-2026-005",
+   "holderName": "한지우",
+   "holderDept": "경영지원팀",
+   "issueDate": "2026-04-02",
+   "status": "사용중",
+   "updatedAt": "2026-09-05T09:00:00Z"
+  },
+  {
+   "token": "qx2z-h8kq-jtku",
+   "name": "LG gram 16 (2025)",
+   "category": "노트북",
+   "assetId": "NB-2026-006",
+   "holderName": "신유진",
+   "holderDept": "마케팅팀",
+   "issueDate": "2026-09-04",
+   "status": "사용중",
+   "updatedAt": "2026-09-09T13:00:00Z"
+  },
+  {
+   "token": "avb9-ya9n-jxrk",
+   "name": "LG UltraFine 27UN880",
+   "category": "모니터",
+   "assetId": "MN-2026-007",
+   "holderName": "신유진",
+   "holderDept": "경영지원팀",
+   "issueDate": "2026-06-20",
+   "status": "사용중",
+   "updatedAt": "2026-09-05T16:00:00Z"
+  },
+  {
+   "token": "m3n6-wjk4-pd35",
+   "name": "LG UltraFine 27UN880",
+   "category": "모니터",
+   "assetId": "MN-2026-008",
+   "holderName": "",
+   "holderDept": "",
+   "issueDate": "2026-06-06",
+   "status": "회수됨",
+   "updatedAt": "2026-09-06T11:00:00Z"
+  },
+  {
+   "token": "x4jh-mfyq-xzdd",
+   "name": "Dell U2723QE 27",
+   "category": "모니터",
+   "assetId": "MN-2026-009",
+   "holderName": "오예린",
+   "holderDept": "경영지원팀",
+   "issueDate": "2026-03-10",
+   "status": "사용중",
+   "updatedAt": "2026-09-09T12:00:00Z"
+  },
+  {
+   "token": "m2xg-7vrj-h4db",
+   "name": "Dell U2723QE 27",
+   "category": "모니터",
+   "assetId": "MN-2026-010",
+   "holderName": "강도윤",
+   "holderDept": "경영지원팀",
+   "issueDate": "2026-04-15",
+   "status": "사용중",
+   "updatedAt": "2026-09-03T10:00:00Z"
+  },
+  {
+   "token": "45xc-4wnv-eqkt",
+   "name": "Logitech MX Master 3S",
+   "category": "마우스",
+   "assetId": "MS-2026-011",
+   "holderName": "강도윤",
+   "holderDept": "프로덕트디자인팀",
+   "issueDate": "2026-03-28",
+   "status": "사용중",
+   "updatedAt": "2026-09-05T14:00:00Z"
+  },
+  {
+   "token": "qvqb-8qeg-as95",
+   "name": "Keychron K8 Pro",
+   "category": "키보드",
+   "assetId": "KB-2026-012",
+   "holderName": "",
+   "holderDept": "",
+   "issueDate": "2026-06-21",
+   "status": "미사용",
+   "updatedAt": "2026-09-07T13:00:00Z"
+  },
+  {
+   "token": "b2r5-3y2t-9kum",
+   "name": "Apple Magic Keyboard",
+   "category": "키보드",
+   "assetId": "KB-2026-013",
+   "holderName": "",
+   "holderDept": "",
+   "issueDate": "2026-09-14",
+   "status": "회수됨",
+   "updatedAt": "2026-09-09T12:00:00Z"
+  },
+  {
+   "token": "b74z-t8g7-77qv",
+   "name": "iPad Air 11 (M3)",
+   "category": "태블릿",
+   "assetId": "TB-2026-014",
+   "holderName": "이준호",
+   "holderDept": "경영지원팀",
+   "issueDate": "2026-05-04",
+   "status": "사용중",
+   "updatedAt": "2026-09-04T09:00:00Z"
+  },
+  {
+   "token": "ej6u-s44b-nhgd",
+   "name": "Sony WH-1000XM5",
+   "category": "헤드셋",
+   "assetId": "HS-2026-015",
+   "holderName": "윤서아",
+   "holderDept": "경영지원팀",
+   "issueDate": "2026-01-20",
+   "status": "수리중",
+   "updatedAt": "2026-09-02T14:00:00Z"
+  },
+  {
+   "token": "58as-xv6p-b3jh",
+   "name": "CalDigit TS4",
+   "category": "도킹/허브",
+   "assetId": "DK-2026-016",
+   "holderName": "박지민",
+   "holderDept": "프로덕트디자인팀",
+   "issueDate": "2026-04-26",
+   "status": "사용중",
+   "updatedAt": "2026-09-05T11:00:00Z"
+  }
+ ]
+}
+snapshot_json_내용.txt 표시 중입니다.
