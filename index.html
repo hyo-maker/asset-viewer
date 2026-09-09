@@ -1,7 +1,3 @@
-
-index_html_내용.txt
-
-100%
 <!doctype html>
 <html lang="ko">
 <head>
@@ -51,6 +47,9 @@ index_html_내용.txt
      같은 폴더의 snapshot.json(대시보드에서 내보낸 최신본)이 있으면
      그 정보로 덮어씁니다. 서버, 로그인, 외부 API가 필요 없습니다. */
   var SNAPSHOT_URL = "snapshot.json";
+  /* 실시간 소스: Supabase (읽기 전용 공개 키). 대시보드가 저장할 때마다 이 표가 갱신된다. */
+  var SUPABASE_URL = "https://mczvdfcwnsfxohprqfgq.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_eKQ2fVqmp39TBZ1IkhSYDQ_EBwaEVvj";
 
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function fmtDate(iso){ if(!iso) return "–"; var p = String(iso).slice(0,10).split("-"); return p.length === 3 ? p[0] + "." + p[1] + "." + p[2] : iso; }
@@ -100,18 +99,33 @@ index_html_내용.txt
   if(base.name) render(base, { fresh:false, note:"최신 정보를 확인하는 중" });
   else document.getElementById("card").innerHTML = '<div class="skeleton">최신 정보를 확인하는 중…</div>';
 
-  fetch(SNAPSHOT_URL + "?v=" + Date.now(), { cache: "no-store" }).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }).then(function(snap){
-    var list = snap && (snap.assets || snap), found = null;
-    if(Array.isArray(list)) for(var i=0;i<list.length;i++){ if(list[i].token === base.token){ found = list[i]; break; } }
-    if(found) render(Object.assign({}, base, found), { fresh:true, asOf: snap.asOf || snap.exportedAt || "" });
-    else if(base.name) render(base, { fresh:false, note: "최신 목록에서 이 태그를 찾지 못했습니다" });
-    else renderError("등록된 장비를 찾을 수 없습니다", "태그 " + base.token + "은(는) 최신 목록에 없습니다.");
-  }).catch(function(){
-    if(base.name) render(base, { fresh:false, note: "" });
-    else renderError("정보를 불러오지 못했습니다", "네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
+  function fromRow(r){
+    return { token:r.token, name:r.name, category:r.category, assetId:r.asset_id, holderName:r.holder_name, holderDept:r.holder_dept, issueDate:r.issue_date, status:r.status, updatedAt:r.updated_at };
+  }
+  function liveLookup(){
+    var u = SUPABASE_URL + "/rest/v1/assets?select=*&token=eq." + encodeURIComponent(base.token) + "&limit=1";
+    return fetch(u, { headers: { "apikey": SUPABASE_KEY, "Accept": "application/json" }, cache: "no-store" })
+      .then(function(r){ if(!r.ok) throw new Error("live " + r.status); return r.json(); })
+      .then(function(rows){ if(!Array.isArray(rows) || !rows.length) throw new Error("not found"); return fromRow(rows[0]); });
+  }
+  function snapshotLookup(){
+    return fetch(SNAPSHOT_URL + "?v=" + Date.now(), { cache: "no-store" }).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }).then(function(snap){
+      var list = snap && (snap.assets || snap);
+      if(Array.isArray(list)) for(var i=0;i<list.length;i++){ if(list[i].token === base.token) return Object.assign({ asOf: snap.asOf || snap.exportedAt || "" }, list[i]); }
+      throw new Error("not in snapshot");
+    });
+  }
+  liveLookup().then(function(found){
+    render(Object.assign({}, base, found), { fresh:true, asOf: (found.updatedAt || new Date().toISOString()).slice(0,10) });
+  }).catch(function(liveErr){
+    return snapshotLookup().then(function(found){
+      render(Object.assign({}, base, found), { fresh:true, asOf: found.asOf });
+    }).catch(function(){
+      if(base.name) render(base, { fresh:false, note: /not found/.test(String(liveErr)) ? "최신 목록에서 이 태그를 찾지 못했습니다" : "" });
+      else renderError("등록된 장비를 찾을 수 없습니다", "태그 " + base.token + "은(는) 목록에 없습니다.");
+    });
   });
 })();
 </script>
 </body>
 </html>
-index_html_내용.txt 표시 중입니다.
