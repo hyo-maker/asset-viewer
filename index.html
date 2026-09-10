@@ -72,7 +72,7 @@
       '<div class="top"><span class="eyebrow">' + esc(a.category || "장비") + '</span><h1>' + esc(a.name || "이름 없음") + '</h1>' +
         (a.status ? '<span class="pill ' + cls(a.status) + '">' + esc(a.status) + '</span>' : '') + '</div>' +
       '<div class="body">' +
-        (a.assetId ? '<div class="row"><span class="k">자산 ID</span><span class="v mono">' + esc(a.assetId) + '</span></div>' : '') +
+        '<div class="row"><span class="k">자산번호</span><span class="v mono" style="font-size:16px">' + (a.assetId ? esc(a.assetId) : "–") + '</span></div>' +
         '<div class="row"><span class="k">시리얼 번호</span><span class="v mono">' + (a.serial ? esc(a.serial) : '<span style="font-weight:400;color:var(--muted)">미입력</span>') + '</span></div>' +
         '<div class="row"><span class="k">이용자</span><span class="v">' + (a.holderName ? esc(a.holderName) : "미배정") + '</span></div>' +
         '<div class="row"><span class="k">소속팀</span><span class="v">' + (a.holderDept ? esc(a.holderDept) : "–") + '</span></div>' +
@@ -104,7 +104,7 @@
     return { token:r.token, name:r.name, category:r.category, assetId:r.asset_id, serial:r.serial || "", holderName:r.holder_name, holderDept:r.holder_dept, issueDate:r.issue_date, status:r.status, updatedAt:r.updated_at };
   }
   function liveLookup(){
-    var u = SUPABASE_URL + "/rest/v1/assets?select=*&token=eq." + encodeURIComponent(base.token) + "&limit=1";
+    var u = SUPABASE_URL + "/rest/v1/assets_public?select=*&token=eq." + encodeURIComponent(base.token) + "&limit=1";
     return fetch(u, { headers: { "apikey": SUPABASE_KEY, "Accept": "application/json" }, cache: "no-store" })
       .then(function(r){ if(!r.ok) throw new Error("live " + r.status); return r.json(); })
       .then(function(rows){ if(!Array.isArray(rows) || !rows.length) throw new Error("not found"); return fromRow(rows[0]); });
