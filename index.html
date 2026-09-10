@@ -73,6 +73,7 @@
         (a.status ? '<span class="pill ' + cls(a.status) + '">' + esc(a.status) + '</span>' : '') + '</div>' +
       '<div class="body">' +
         (a.assetId ? '<div class="row"><span class="k">자산 ID</span><span class="v mono">' + esc(a.assetId) + '</span></div>' : '') +
+        '<div class="row"><span class="k">시리얼 번호</span><span class="v mono">' + (a.serial ? esc(a.serial) : '<span style="font-weight:400;color:var(--muted)">미입력</span>') + '</span></div>' +
         '<div class="row"><span class="k">이용자</span><span class="v">' + (a.holderName ? esc(a.holderName) : "미배정") + '</span></div>' +
         '<div class="row"><span class="k">소속팀</span><span class="v">' + (a.holderDept ? esc(a.holderDept) : "–") + '</span></div>' +
         '<div class="row"><span class="k">지급일</span><span class="v mono">' + fmtDate(a.issueDate) + '</span></div>' +
@@ -90,7 +91,7 @@
   var p = parseHash();
   var base = null;
   if(p.d){
-    try { var o = JSON.parse(b64urlDecode(p.d)); base = { token: p.t || o.k || "", name: o.n, category: o.c, assetId: o.i, holderName: o.h, holderDept: o.g, issueDate: o.d, status: o.s }; }
+    try { var o = JSON.parse(b64urlDecode(p.d)); base = { token: p.t || o.k || "", name: o.n, category: o.c, assetId: o.i, serial: o.r || "", holderName: o.h, holderDept: o.g, issueDate: o.d, status: o.s }; }
     catch(e){ base = null; }
   } else if(p.t){
     base = { token: p.t };
@@ -100,7 +101,7 @@
   else document.getElementById("card").innerHTML = '<div class="skeleton">최신 정보를 확인하는 중…</div>';
 
   function fromRow(r){
-    return { token:r.token, name:r.name, category:r.category, assetId:r.asset_id, holderName:r.holder_name, holderDept:r.holder_dept, issueDate:r.issue_date, status:r.status, updatedAt:r.updated_at };
+    return { token:r.token, name:r.name, category:r.category, assetId:r.asset_id, serial:r.serial || "", holderName:r.holder_name, holderDept:r.holder_dept, issueDate:r.issue_date, status:r.status, updatedAt:r.updated_at };
   }
   function liveLookup(){
     var u = SUPABASE_URL + "/rest/v1/assets?select=*&token=eq." + encodeURIComponent(base.token) + "&limit=1";
